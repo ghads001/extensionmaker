@@ -1,0 +1,428 @@
+:root {
+  --bg-color: #1e1e1e;
+  --text-color: #f0f0f0;
+  --prompt-color: #00ff00;
+  --accent-color: #0066ff;
+  --error-color: #ff3333;
+  --success-color: #33ff33;
+  --chrome-bg: #323639;
+  --chrome-text: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--chrome-bg);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--chrome-text);
+  position: relative;
+  overflow: hidden;
+}
+
+/* CRT screen effect */
+body::before {
+  content: "";
+  position: fixed;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 2;
+  animation: scanlines 4s linear infinite;
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(50%); }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+.terminal {
+  width: 95%;
+  max-width: 1000px;
+  height: 85vh;
+  background-color: var(--chrome-bg);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+              0 0 20px rgba(0, 102, 255, 0.2),
+              inset 0 0 15px rgba(0, 102, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 102, 255, 0.2),
+                inset 0 0 15px rgba(0, 102, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(0, 102, 255, 0.4),
+                inset 0 0 25px rgba(0, 102, 255, 0.2);
+  }
+}
+
+.terminal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.terminal-header {
+  background-color: #42464a;
+  padding: 12px 16px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 8px;
+  margin-right: 15px;
+}
+
+.terminal-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.terminal-button:hover {
+  transform: scale(1.1);
+}
+
+.close { background-color: #ff5f56; }
+.minimize { background-color: #ffbd2e; }
+.maximize { background-color: #27c93f; }
+
+.terminal-title {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+  text-align: center;
+}
+
+.terminal-output {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  font-family: 'Fira Code', monospace;
+  background-color: rgba(0, 0, 0, 0.3);
+  word-break: break-word;
+}
+
+/* Typewriter effect */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  border-right: none;
+  animation: none;
+  margin: 0;
+}
+
+.typewriter.active {
+  border-right: none;
+  animation: none;
+}
+
+.terminal-input-line {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  gap: 8px;
+  border-top: 1px solid #333;
+}
+
+.prompt {
+  color: var(--prompt-color);
+  font-weight: bold;
+}
+
+#commandInput {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  outline: none;
+}
+
+.output-line {
+  margin: 5px 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  width: 100%;
+}
+
+.error {
+  color: var(--error-color);
+  animation: errorShake 0.5s ease-in-out;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.success {
+  color: var(--success-color);
+  animation: successPulse 1s ease-out;
+}
+
+@keyframes successPulse {
+  0% { text-shadow: 0 0 0 rgba(51, 255, 51, 0); }
+  50% { text-shadow: 0 0 20px rgba(51, 255, 51, 0.5); }
+  100% { text-shadow: 0 0 0 rgba(51, 255, 51, 0); }
+}
+
+.code-block {
+  background-color: #2d2d2d;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+/* Extension listings */
+.extension-list {
+  margin: 10px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.extension-item {
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.extension-item:hover {
+  transform: translateX(5px);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.extension-author {
+  color: var(--accent-color);
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.extension-title {
+  color: var(--success-color);
+  font-size: 1.1em;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.extension-description {
+  color: var(--text-color);
+  opacity: 0.8;
+  font-size: 0.9em;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.extension-date {
+  color: var(--text-color);
+  opacity: 0.6;
+  font-size: 0.8em;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Loading animation */
+.loading {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 20px;
+  animation: loadingGlow 2s ease-in-out infinite;
+}
+
+.loading div {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  animation: loading 1.2s linear infinite;
+}
+
+.loading div:nth-child(1) {
+  animation-delay: 0s;
+  left: 8px;
+}
+
+.loading div:nth-child(2) {
+  animation-delay: -0.4s;
+  left: 32px;
+}
+
+.loading div:nth-child(3) {
+  animation-delay: -0.8s;
+  left: 56px;
+}
+
+@keyframes loading {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.7);
+  }
+}
+
+@keyframes loadingGlow {
+  0%, 100% { filter: drop-shadow(0 0 5px var(--accent-color)); }
+  50% { filter: drop-shadow(0 0 15px var(--accent-color)); }
+}
+
+/* Add magnifying glass effect */
+.magnifier {
+  display: none;
+}
+
+/* Sound animation */
+.sound-wave {
+  display: none;  
+}
+
+.sound-bar {
+  width: 3px;
+  height: 20px;
+  background-color: var(--accent-color);
+  animation: soundWave 1s ease-in-out infinite;
+}
+
+@keyframes soundWave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+/* Matrix-like background */
+.matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.1;
+  background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+              repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 50px,
+                rgba(0, 255, 0, 0.1) 50px,
+                rgba(0, 255, 0, 0.1) 51px
+              );
+  animation: matrix 60s linear infinite;
+}
+
+@keyframes matrix {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 1000px; }
+}
+
+/* Brand logo animation */
+.brand-logo {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-size: 14px;
+  color: var(--accent-color);
+  text-shadow: 0 0 10px rgba(0, 102, 255, 0.5);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.brand-logo:hover {
+  opacity: 1;
+  text-shadow: 0 0 20px rgba(0, 102, 255, 0.8);
+}
